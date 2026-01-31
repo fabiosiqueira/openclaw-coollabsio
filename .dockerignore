@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log*
+.env
+.git
+.github
+*.tar.gz
+.DS_Store
+.claude
+PLAN.md
+README.md
+LICENSE
+my-openclaw.json
