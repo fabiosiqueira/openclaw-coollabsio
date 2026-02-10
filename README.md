@@ -107,7 +107,7 @@ Triggers: `schedule: '0 */6 * * *'` + `workflow_dispatch` (version, force_rebuil
 | `VENICE_API_KEY` | Venice AI API key (OpenAI-compatible). Configures Llama 3.3 70B. |
 | `MOONSHOT_API_KEY` | Moonshot API key (OpenAI-compatible). Configures Kimi K2.5. |
 | `KIMI_API_KEY` | Kimi Coding API key (Anthropic-compatible). Configures K2P5. |
-| `MINIMAX_API_KEY` | MiniMax API key (OpenAI-compatible). Configures MiniMax M2.1. |
+| `MINIMAX_API_KEY` | MiniMax API key (Anthropic-compatible). Configures MiniMax M2.1. |
 | `ZAI_API_KEY` | ZAI API key. Configures GLM models. |
 | `AI_GATEWAY_API_KEY` | Vercel AI Gateway API key. |
 | `OPENCODE_API_KEY` | OpenCode API key. Also accepted as `OPENCODE_ZEN_API_KEY`. |

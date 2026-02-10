@@ -182,16 +182,16 @@ if (process.env.VENICE_API_KEY) {
   removeProvider("venice", "Venice AI", "VENICE_API_KEY");
 }
 
-// MiniMax (OpenAI-compatible)
+// MiniMax (Anthropic-compatible)
 if (process.env.MINIMAX_API_KEY) {
   console.log("[configure] configuring MiniMax provider");
   ensure(config, "models", "providers");
   config.models.providers.minimax = {
-    api: "openai-completions",
+    api: "anthropic-messages",
     apiKey: process.env.MINIMAX_API_KEY,
-    baseUrl: "https://api.minimax.chat/v1",
+    baseUrl: "https://api.minimax.io/anthropic",
     models: [
-      { id: "MiniMax-M2.1", name: "MiniMax M2.1", contextWindow: 192000 },
+      { id: "MiniMax-M2.1", name: "MiniMax M2.1", contextWindow: 200000 },
     ],
   };
 } else {
