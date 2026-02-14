@@ -12,7 +12,7 @@ docker run -d \
   -e AUTH_PASSWORD=changeme \
   -e OPENCLAW_GATEWAY_TOKEN=my-secret-token \
   -v openclaw-data:/data \
-  coollabsio/openclaw:latest
+  fabiosikeira/openclaw:latest
 ```
 
 - `ANTHROPIC_API_KEY` — any [supported provider key](#ai-providers-at-least-one-required) works (OpenAI, Gemini, etc.)
@@ -37,7 +37,7 @@ docker compose up -d
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Docker container (coollabsio/openclaw)     │
+│  Docker container (fabiosikeira/openclaw)   │
 │                                             │
 │  ┌──────────┐  :8080   ┌────────────────┐  │
 │  │  nginx    │ ──────→  │  openclaw      │  │
@@ -53,14 +53,23 @@ docker compose up -d
 ```
 
 Two-layer Docker build:
-1. **Base image** (`Dockerfile.base`) — builds openclaw from source. Tagged `coollabsio/openclaw-base:<version>`.
-2. **Final image** (`Dockerfile`) — FROM base, adds nginx + env-to-config scripts. Tagged `coollabsio/openclaw:<version>`.
+1. **Base image** (`Dockerfile.base`) — builds openclaw from source. Tagged `fabiosikeira/openclaw-base:latest`.
+2. **Final image** (`Dockerfile`) — FROM base, adds nginx + env-to-config scripts. Tagged `fabiosikeira/openclaw:latest` (and `:main`).
+
+## Included Dependencies
+
+The custom image includes extra tools needed for OpenClaw workspaces and Infinite Memory:
+
+- **Python 3** (`python3`, `pip`, `venv`)
+- **SQLite3** (for memory database)
+- **Git** (configured to clean dirty state during build)
+- **Ollama CLI** (connects to sidecar)
+- **sentence-transformers** (pip package for local embeddings)
 
 ## Files
 
 ```
-.github/workflows/auto-update.yml   — cron every 6h, check openclaw releases, build+push
-.github/workflows/build.yml         — CI on push/PR (build only, no push)
+.github/workflows/docker-build.yml   — CI on push to main (build + push to Docker Hub)
 Dockerfile.base                     — multi-stage: build openclaw from source → slim runtime
 Dockerfile                          — FROM base, add nginx + config scripts + entrypoint
 scripts/configure.js                — reads env vars, writes/patches openclaw.json
@@ -71,16 +80,15 @@ nginx/default.conf                  — reverse proxy :8080 → :18789, optional
 .env.example                        — env var reference
 ```
 
-## auto-update.yml workflow
+## docker-build.yml workflow
 
 ```
 Jobs:
-1. check-release        — fetch latest openclaw/openclaw release, skip if image exists
-2. build-base           — matrix amd64/arm64, build Dockerfile.base, push per-arch
-3. merge-base-manifest  — merge into coollabsio/openclaw-base:<ver> + :latest
-4. build-final          — matrix amd64/arm64, build Dockerfile, push per-arch
-5. merge-final-manifest — merge into coollabsio/openclaw:<ver> + :latest
+1. build-base           — build Dockerfile.base, push fabiosikeira/openclaw-base:latest
+2. build-final          — build Dockerfile, push fabiosikeira/openclaw:latest + :main + :sha
 ```
+
+Triggers: `push: [main]`, `pull_request: [main]`
 
 Triggers: `schedule: '0 */6 * * *'` + `workflow_dispatch` (version, force_rebuild, skip_latest_tag).
 
